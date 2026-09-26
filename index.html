@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy 5th Monthsary</title>
+    <!-- Importing Romantic Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* PURPLE THEME VARIABLES */
+            --envelope-deep: #4a148c;
+            --envelope-flap: #6a1b9a;
+            --envelope-pocket: #7b1fa2;
+            --purple-glow: rgba(186, 104, 200, 0.8);
+            --purple-text: #ce93d8;
+            --modal-bg: #fcfaff;
+            --modal-heading: #6a1b9a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Dreamy purple gradient background */
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            min-height: 100vh;
+            min-height: 100dvh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* =========================================
+           ENVELOPE LANDING PAGE (Initial View)
+           ========================================= */
+        #envelope-scene {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            transition: opacity 1s ease;
+            padding: 20px;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 340px;
+            height: 230px;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-deep);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(74, 20, 140, 0.4);
+            transform-style: preserve-3d;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 170px solid transparent;
+            border-right: 170px solid transparent;
+            border-top: 115px solid var(--envelope-flap);
+            transform-origin: top;
+            transition: transform 0.8s ease-in-out, z-index 0.2s;
+            z-index: 4;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .inside {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #d1c4e9;
+            border-radius: 12px;
+            z-index: 1;
+        }
+
+        .pocket {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-deep);
+            border-radius: 12px;
+            z-index: 3;
+            background-image: linear-gradient(to top right, transparent 49%, var(--envelope-pocket) 50%),
+                              linear-gradient(to top left, transparent 49%, var(--envelope-pocket) 50%);
+            background-size: 50% 100%;
+            background-repeat: no-repeat;
+            background-position: left, right;
+        }
+
+        .heart-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            z-index: 5;
+            transition: opacity 0.4s ease;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+        }
+
+        .click-text {
+            margin-top: 40px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: #4a148c;
+            text-shadow: 1px 1px 4px rgba(255,255,255,0.8);
+            padding: 0 20px;
+        }
+
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        .envelope-wrapper.open .heart-seal {
+            opacity: 0;
+        }
+
+        /* =========================================
+           FULL SCREEN MESSAGE & BUTTONS
+           ========================================= */
+        #main-content {
+            display: none;
+            opacity: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            
+            /* YOUR ORIGINAL BACKGROUND IMAGE - NO PURPLE OVERLAY */
+            background-color: #2b0b3a; /* Fallback color */
+            background-image: url('A.jpg'); 
+            background-size: cover;
+            background-position: center;
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 1.5s ease;
+        }
+
+        #main-content.show {
+            opacity: 1;
+        }
+
+        .message-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 5.5rem); 
+            color: #ffffff;
+            line-height: 1.2;
+            /* PURPLE GLOW EFFECT */
+            text-shadow: 
+                0 0 10px var(--purple-glow),
+                0 0 20px var(--purple-glow),
+                0 0 40px var(--purple-glow),
+                0 0 80px rgba(156, 39, 176, 0.6);
+            animation: pulseGlow 3s infinite ease-in-out;
+            max-width: 100%;
+            margin-bottom: 35px;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); text-shadow: 0 0 10px var(--purple-glow), 0 0 20px var(--purple-glow), 0 0 40px rgba(156, 39, 176, 0.4); }
+            50% { transform: scale(1.04); text-shadow: 0 0 20px var(--purple-glow), 0 0 40px var(--purple-glow), 0 0 60px rgba(156, 39, 176, 0.8); }
+            100% { transform: scale(1); text-shadow: 0 0 10px var(--purple-glow), 0 0 20px var(--purple-glow), 0 0 40px rgba(156, 39, 176, 0.4); }
+        }
+
+        /* The Buttons */
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.5s both;
+            width: 100%;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .action-btn {
+            background: rgba(156, 39, 176, 0.25);
+            border: 1px solid rgba(225, 190, 231, 0.6);
+            color: #f3e5f5;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 20px rgba(74, 20, 140, 0.3);
+        }
+
+        .action-btn:hover {
+            background: rgba(156, 39, 176, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(186, 104, 200, 0.6);
+            border-color: #e1bee7;
+        }
+
+        /* =========================================
+           MODAL POP-UPS (Letter, Flower, Memories)
+           ========================================= */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(43, 11, 58, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 15px;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            padding: 35px 25px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(74, 20, 140, 0.4);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #e1bee7;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #7b1fa2;
+            transition: color 0.2s, transform 0.2s;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #4a148c;
+            transform: scale(1.1);
+        }
+
+        .modal-content h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.4rem;
+            color: var(--modal-heading);
+            margin-bottom: 20px;
+            margin-top: 5px;
+        }
+
+        .modal-content p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #444;
+            margin-bottom: 15px;
+        }
+
+        /* Specific Modal Elements */
+        .letter-paper {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(74, 20, 140, 0.08);
+            border: 1px solid #f3e5f5;
+            text-align: left;
+        }
+
+        .flower-image {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(74, 20, 140, 0.15);
+        }
+
+        /* PHOTO STRIP STYLES FOR REAL IMAGES */
+        .photo-strip {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap; 
+        }
+
+        .photo-placeholder {
+            width: 65px;  
+            height: 85px;
+            object-fit: cover; 
+            border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(74, 20, 140, 0.15);
+            border-radius: 8px;
+            background-color: #f3e5f5;
+        }
+
+        /* AUDIO PLAYER */
+        .music-player-container {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 15px;
+            border: 1px solid #f3e5f5;
+            box-shadow: 0 4px 15px rgba(74, 20, 140, 0.05);
+        }
+
+        .music-label {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: var(--modal-heading);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        audio {
+            width: 100%;
+            border-radius: 30px;
+            outline: none;
+        }
+
+        /* =========================================
+           MOBILE RESPONSIVENESS (Phones)
+           ========================================= */
+        @media (max-width: 600px) {
+            /* Envelope scaling */
+            .envelope-wrapper { 
+                width: 290px; 
+                height: 195px; 
+            }
+            .flap { 
+                border-left: 145px solid transparent; 
+                border-right: 145px solid transparent; 
+                border-top: 98px solid var(--envelope-flap); 
+            }
+            .click-text { 
+                font-size: 2.2rem; 
+                margin-top: 30px;
+            }
+            
+            /* Text scaling */
+            .message-text { 
+                font-size: clamp(2.2rem, 9vw, 3.5rem); 
+                margin-bottom: 25px;
+            }
+            
+            /* Stack buttons vertically for easier tapping */
+            .buttons-container {
+                flex-direction: column;
+                gap: 14px;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 85%; 
+                padding: 15px 20px;
+                font-size: 1.05rem;
+            }
+
+            /* Modal adjustments */
+            .modal-content {
+                padding: 30px 18px;
+                width: 95%;
+            }
+            .modal-content h2 {
+                font-size: 2.1rem;
+            }
+            .letter-paper {
+                padding: 18px;
+            }
+            .flower-image {
+                max-width: 260px;
+            }
+            .photo-placeholder {
+                width: 55px; 
+                height: 75px;
+            }
+            .music-player-container {
+                padding: 15px;
+            }
+            .music-label {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* For very small phones */
+        @media (max-width: 380px) {
+            .envelope-wrapper { 
+                width: 250px; 
+                height: 170px; 
+            }
+            .flap { 
+                border-left: 125px solid transparent; 
+                border-right: 125px solid transparent; 
+                border-top: 85px solid var(--envelope-flap); 
+            }
+            .click-text { 
+                font-size: 1.8rem; 
+                margin-top: 25px;
+            }
+            .message-text { 
+                font-size: clamp(1.8rem, 10vw, 2.5rem); 
+            }
+            .action-btn {
+                width: 90%;
+                padding: 12px 15px;
+                font-size: 0.95rem;
+            }
+            .photo-placeholder {
+                width: 45px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================
+         STATE 1: THE ENVELOPE
+         ========================================= -->
+    <div id="envelope-scene">
+        <div class="envelope-wrapper" id="envelope">
+            <div class="envelope">
+                <div class="inside"></div>
+                <div class="flap"></div>
+                <div class="pocket"></div>
+                <div class="heart-seal">💜</div> 
+            </div>
+        </div>
+        <h2 class="click-text">You've got a mail!</h2>
+    </div>
+
+    <!-- =========================================
+         STATE 2: THE MAIN MESSAGE & BUTTONS
+         ========================================= -->
+    <div id="main-content">
+        <h1 class="message-text">Happy 5th Monthsary, Baby!</h1>
+        
+        <div class="buttons-container">
+            <button class="action-btn" onclick="openModal('letterModal')">💌 Letter</button>
+            <button class="action-btn" onclick="openModal('flowerModal')">💐 Flower</button>
+            <button class="action-btn" onclick="openModal('memoriesModal')">📸 Memories</button>
+        </div>
+    </div>
+
+    <!-- =========================================
+         MODALS (Hidden Pop-ups)
+         ========================================= -->
+    
+    <!-- Letter Modal -->
+    <div id="letterModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('letterModal')">&times;</span>
+            <h2>A Letter For You</h2>
+            <div class="letter-paper">
+                <p>Happy 5th Monthsary, Baby! 💜<br><br>I’m so grateful for every moment, every laugh, and every memory we’ve shared together. These five months may seem short, but you’ve already become such a special part of my life. I will always be your baby boy who always understand you baby and who loves you so muchhhhhie, I'm alyways proud of you baby cutiee nko.<br><br>Thank you for always being there and for making my days brighter just by being you. I love you so much, Baby, and I’m excited for all the months and memories we’ll share together. 💜 I LOVEEEEEE YOUUUU SOOOOO MUCHHHHHH BABY ELAYYYYY😘😘😘😘</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flower Modal -->
+    <div id="flowerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('flowerModal')">&times;</span>
+            <img src="flower.jpg" alt="Bouquet of Roses" class="flower-image">
+            <h2>Thank You</h2>
+            <p>For always being there for me. You make every day brighter just by being you. These flowers are a small token of my endless love.</p>
+        </div>
+    </div>
+
+    <!-- Memories Modal -->
+    <div id="memoriesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('memoriesModal')">&times;</span>
+            <h2>Our Beautiful Memories</h2>
+            <p>I loveeeee youuuu baby</p>
+            
+            <!-- 5 PICTURE SLOTS -->
+            <div class="photo-strip">
+                <img src="pic1.jpg" alt="Memory 1" class="photo-placeholder">
+                <img src="pic2.jpg" alt="Memory 2" class="photo-placeholder">
+                <img src="pic3.jpg" alt="Memory 3" class="photo-placeholder">
+                <img src="pic4.jpg" alt="Memory 4" class="photo-placeholder">
+                <img src="pic5.jpg" alt="Memory 5" class="photo-placeholder">
+            </div>
+
+            <!-- MUSIC PLAYER -->
+            <div class="music-player-container">
+                <span class="music-label">Paramore – The Only Exception 🎵</span>
+                <audio controls>
+                    <source src="song.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         JAVASCRIPT FOR INTERACTION
+         ========================================= -->
+    <script>
+        // Envelope Opening Logic
+        const envelopeWrapper = document.getElementById('envelope');
+        const envelopeScene = document.getElementById('envelope-scene');
+        const mainContent = document.getElementById('main-content');
+
+        envelopeWrapper.addEventListener('click', () => {
+            envelopeWrapper.classList.add('open');
+
+            setTimeout(() => {
+                envelopeScene.style.opacity = '0';
+                
+                setTimeout(() => {
+                    envelopeScene.style.display = 'none';
+                    mainContent.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        mainContent.classList.add('show');
+                    }, 50);
+
+                }, 500);
+            }, 800); 
+        });
+
+        // Modal Logic (Opening and Closing)
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Close modal if user clicks outside the content box
+        window.addEventListener('click', (event) => {
+            if (event.target.classList.contains('modal')) {
+                const modalId = event.target.id;
+                closeModal(modalId);
+            }
+        });
+    </script>
+</body>
+</html>
